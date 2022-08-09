@@ -1,7 +1,6 @@
 import './Favourite.css';
 
 import {
-  Box,
   IconButton,
   List,
   ListItem,
