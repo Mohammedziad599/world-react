@@ -3,7 +3,7 @@ import {Button, Menu, MenuItem, useTheme} from "@mui/material";
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import {useState} from "react";
-import {uuid} from "uuidv4";
+import {v4 as uuid} from "uuid";
 
 function Dropdown(props) {
 
