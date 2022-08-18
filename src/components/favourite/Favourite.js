@@ -1,4 +1,4 @@
-import './Favourite.css';
+import "./Favourite.css";
 
 import {
   IconButton,
@@ -12,29 +12,39 @@ import {
 } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import {Link} from "react-router-dom";
+import {useDrop} from "react-dnd";
+import {dragTypes} from "../../utilities/Constants";
+import {useState} from "react";
 
-function removeFromFav(code) {
-  return undefined;
-}
+function Favourite({countries = {}, sx = {}, elevation = 1, onDrop, onCountryDelete}) {
+  const [elementDeleted, setElementDeleted] = useState(false);
 
-function Favourite(props) {
-  const {
-    countries = []
-  } = props;
+  const [{isOver}, drop] = useDrop({
+    accept: dragTypes.COUNTRY_CARD,
+    drop: (item, monitor) => onDrop(item),
+    collect: monitor => ({
+      isOver: monitor.isOver()
+    })
+  });
 
-  const countriesContent = countries.map((country) => {
+  function deleteCountry(code) {
+    onCountryDelete(code);
+    setElementDeleted((prevState) => !prevState);
+  }
+
+  const countriesContent = Object.entries(countries).map(([code, value]) => {
     return (
       <ListItem
-        key={country.code}
+        key={code}
         secondaryAction={
-          <IconButton edge="end" aria-label="delete" onClick={removeFromFav(country.code)}>
+          <IconButton edge="end" aria-label="delete" onClick={() => deleteCountry(code)}>
             <DeleteIcon/>
           </IconButton>
         }
         disablePadding
       >
-        <ListItemButton component={Link} to={'/country/' + country.code}>
-          <ListItemText primary={country.name}/>
+        <ListItemButton component={Link} to={"/country/" + code}>
+          <ListItemText primary={`${value.flag} ${value.name}`}/>
         </ListItemButton>
       </ListItem>
     );
@@ -42,11 +52,16 @@ function Favourite(props) {
 
   return (
     <Paper
-      sx={props.sx}
-      elevation={props.elevation || 1}>
-      <aside aria-label="Favorite Countries">
+      ref={drop}
+      sx={{
+        border: "2px solid",
+        borderColor: isOver ? "green" : "transparent",
+        ...sx
+      }}
+      elevation={elevation}>
+      <aside
+        aria-label="Favorite Countries">
         <List
-          sx={props.sx}
           aria-labelledby="fav-header"
           subheader={
             <ListSubheader disableGutters component="header" id="fav-header">
@@ -56,7 +71,7 @@ function Favourite(props) {
                   py: 2,
                   userSelect: "none"
                 }}
-                elevation={props.elevation || 1}>
+                elevation={elevation}>
                 <Typography variant="h6">
                   Favourites
                 </Typography>
