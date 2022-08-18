@@ -100,7 +100,6 @@ function Home() {
     }
   }, [search, filter]);
 
-
   //TODO fix this
   // useEffect(() => {
   //   console.log("useEffect");
@@ -202,11 +201,9 @@ function Home() {
             xs={12}
             lg={9}>
             {
-              (countries.length !== 0) && (
-                <CountriesList
-                  countries={countries}
-                  loading={loading}/>
-              )
+              <CountriesList
+                countries={countries}
+                loading={loading}/>
             }
           </Grid>
         </DndProvider>
