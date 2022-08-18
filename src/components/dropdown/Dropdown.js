@@ -6,7 +6,7 @@ import {useState} from "react";
 
 function Dropdown({
                     items = [], sx = {}, iconLeft = "",
-                    label = "", iconRight = {}, enableDropdownArrow = false
+                    label = "", iconRight = "", enableDropdownArrow = false
                   }) {
   const [menu, setMenu] = useState(null);
   const theme = useTheme();
