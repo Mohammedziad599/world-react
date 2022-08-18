@@ -1,71 +1,63 @@
-import './FilterMenu.css';
+import "./FilterMenu.css";
 import Dropdown from "../dropdown/Dropdown";
 import {useState} from "react";
+import {filterCodes} from "../../utilities/Constants";
 
-function FilterMenu(props) {
-  const [filterValue, setFilterValue] = useState(null);
+function FilterMenu({onFilterChange, sx = {}}) {
+  const [filterValue, setFilterValue] = useState(filterCodes.NO_FILTER);
 
   function onItemClick(item) {
-    //TODO change label
-    if (filterValue?.label === item.label) {
-      setFilterValue(null);
-      return;
+    if (filterValue.label === item.label) {
+      setFilterValue(filterCodes.NO_FILTER);
+      onFilterChange(filterCodes.NO_FILTER);
+    } else {
+      onFilterChange(item.code);
+      setFilterValue(item.label);
     }
-    setFilterValue(item);
   }
+
+  const items = [
+    {
+      label: "Africa",
+      code: filterCodes.AFRICA,
+      onClick: onItemClick
+    },
+    {
+      label: "Americas",
+      code: filterCodes.AMERICAS,
+      onClick: onItemClick
+    },
+    {
+      label: "Asia",
+      code: filterCodes.ASIA,
+      onClick: onItemClick
+    },
+    {
+      label: "Europe",
+      code: filterCodes.EUROPE,
+      onClick: onItemClick
+    },
+    {
+      label: "Oceania",
+      code: filterCodes.OCEANIA,
+      onClick: onItemClick
+    },
+    {
+      label: "Favourites",
+      code: filterCodes.FAVOURITES,
+      onClick: onItemClick
+    }
+  ];
 
   return (
     <>
       <Dropdown
-        sx={{...props.sx}}
-        label={(filterValue ? filterValue.label : "Filter By")}
+        sx={{
+          ...sx
+        }}
+        label={(filterValue ? filterValue : "Filter By")}
         enableDropdownArrow={true}
-        items={
-          [
-            {
-              label: "Africa",
-              onClick: onItemClick,
-              itemProp: {
-                "data-value": "Africa"
-              },
-            },
-            {
-              label: "Americas",
-              onClick: onItemClick,
-              itemProp: {
-                "data-value": "Americas"
-              },
-            },
-            {
-              label: "Asia",
-              onClick: onItemClick,
-              itemProp: {
-                "data-value": "Asia"
-              },
-            },
-            {
-              label: "Europe",
-              onClick: onItemClick,
-              itemProp: {
-                "data-value": "Europe"
-              },
-            },
-            {
-              label: "Oceania",
-              onClick: onItemClick,
-              itemProp: {
-                "data-value": "Oceania"
-              },
-            },
-            {
-              label: "Favourites",
-              onClick: onItemClick,
-              itemProp: {
-                "data-value": "Favourites"
-              },
-            }
-          ]
-        }
+        items={items}
       />
     </>
   );
