@@ -1,10 +1,11 @@
-import './Header.css';
+import "./Header.css";
 import {AppBar, Container, Toolbar, Typography, useTheme} from "@mui/material";
 import {Link} from "react-router-dom";
 import ThemeSwitcher from "../theme-switcher/ThemeSwitcher";
 
-function Header(props) {
+function Header() {
   const theme = useTheme();
+
   return (
     <header>
       <AppBar position="static" color="default">
@@ -12,7 +13,7 @@ function Header(props) {
           <Toolbar sx={{justifyContent: "space-between"}} disableGutters>
             <Link to="/" className="decoration-none">
               <Typography
-                variant="h6"
+                variant="h5"
                 noWrap
                 sx={{
                   textDecoration: "none",
@@ -22,7 +23,7 @@ function Header(props) {
                 Where in the world?
               </Typography>
             </Link>
-            <ThemeSwitcher />
+            <ThemeSwitcher/>
           </Toolbar>
         </Container>
       </AppBar>
