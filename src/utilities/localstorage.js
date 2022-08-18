@@ -5,5 +5,5 @@ export function setFavouriteCountriesLocalstorage(countries){
 }
 
 export function readFavouriteCountriesLocalstorage(){
-  return JSON.parse(localStorage.getItem(filterCodes.FAVOURITES)) || [];
+  return JSON.parse(localStorage.getItem(filterCodes.FAVOURITES)) || {};
 }
