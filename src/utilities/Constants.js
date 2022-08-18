@@ -8,6 +8,12 @@ export const filterCodes = {
   FAVOURITES: "FAVOURITES"
 };
 
+export const themeCodes = {
+  LIGHT: "LIGHT",
+  DARK: "DARK",
+  AUTO: "AUTO",
+}
+
 export const dragTypes = {
   COUNTRY_CARD: "CARD"
 };

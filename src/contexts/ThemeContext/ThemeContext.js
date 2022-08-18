@@ -1,12 +1,13 @@
 import {createContext, useMemo, useState} from "react";
 import {createTheme, CssBaseline, ThemeProvider, useMediaQuery} from "@mui/material";
+import {themeCodes} from "../../utilities/Constants";
 
 const ThemeContext = createContext();
 
 export function ThemingProvider({children}) {
   const prefersDarkMode = useMediaQuery("(prefers-color-scheme: dark)");
 
-  const [theme, setTheme] = useState("auto");
+  const [theme, setTheme] = useState(themeCodes.AUTO);
 
   const muiTheme = useMemo(
     () => {
@@ -20,7 +21,7 @@ export function ThemingProvider({children}) {
 
       return createTheme({
         palette: {
-          mode: theme === "auto" ? (prefersDarkMode ? "dark" : "light") : theme
+          mode: theme === themeCodes.AUTO ? (prefersDarkMode ? "dark" : "light") : theme
         },
         components: {
           MuiCssBaseline: {
