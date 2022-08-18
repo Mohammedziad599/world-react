@@ -4,7 +4,7 @@ import {Link} from "react-router-dom";
 
 function CountryInformation({country = {}, loading = false}) {
   const {
-    name = {},
+    name = {nativeName: {key: {common: ""}}},
     nativeName = name.nativeName[Object.keys(name.nativeName)[0]].common,
     population = 0,
     region = "",
