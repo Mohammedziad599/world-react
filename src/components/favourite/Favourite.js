@@ -12,27 +12,40 @@ import {
 } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import {Link} from "react-router-dom";
-import {useDrop} from "react-dnd";
-import {dragTypes} from "../../utilities/Constants";
-import {useState} from "react";
+import {useContext, useState} from "react";
+import FavouriteContext from "../../contexts/FavouriteContext/FavouriteContext";
 
-function Favourite({countries = {}, sx = {}, elevation = 1, onDrop, onCountryDelete}) {
-  const [elementDeleted, setElementDeleted] = useState(false);
+function Favourite({sx = {}, elevation = 1}) {
+  const [favourite, addToFavourite, removeFromFavourite] = useContext(FavouriteContext);
 
-  const [{isOver}, drop] = useDrop({
-    accept: dragTypes.COUNTRY_CARD,
-    drop: (item, monitor) => onDrop(item),
-    collect: monitor => ({
-      isOver: monitor.isOver()
-    })
-  });
+  const [isOver, setIsOver] = useState(false);
+
+  const [rerender, setRerender] = useState(false);
+
+  const onDragOver = (event) => {
+    event.preventDefault();
+    setIsOver(true);
+  };
+
+  const onDragleave = () => {
+    setIsOver(false);
+  };
+
+  const onDrop = (event) => {
+    event.preventDefault();
+    setIsOver(false);
+    let country = JSON.parse(event.dataTransfer.getData("country"));
+    if (country) {
+      addToFavourite(country);
+    }
+  };
 
   function deleteCountry(code) {
-    onCountryDelete(code);
-    setElementDeleted((prevState) => !prevState);
+    removeFromFavourite(code);
+    setRerender((prevState) => !prevState);
   }
 
-  const countriesContent = Object.entries(countries).map(([code, value]) => {
+  const countriesContent = Object.entries(favourite).map(([code, value]) => {
     return (
       <ListItem
         key={code}
@@ -52,7 +65,9 @@ function Favourite({countries = {}, sx = {}, elevation = 1, onDrop, onCountryDel
 
   return (
     <Paper
-      ref={drop}
+      onDragOver={onDragOver}
+      onDragLeave={onDragleave}
+      onDropCapture={onDrop}
       sx={{
         border: "2px solid",
         borderColor: isOver ? "green" : "transparent",
