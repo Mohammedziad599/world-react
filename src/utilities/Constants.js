@@ -9,9 +9,9 @@ export const filterCodes = {
 };
 
 export const themeCodes = {
-  LIGHT: "LIGHT",
-  DARK: "DARK",
-  AUTO: "AUTO",
+  LIGHT: "light",
+  DARK: "dark",
+  AUTO: "auto",
 }
 
 export const dragTypes = {
