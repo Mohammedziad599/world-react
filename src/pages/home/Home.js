@@ -4,12 +4,10 @@ import {Alert, Grid, Paper, Snackbar} from "@mui/material";
 import FilterMenu from "../../components/filter-menu/FilterMenu";
 import Favourite from "../../components/favourite/Favourite";
 import CountriesList from "../../components/countries-list/CountriesList";
-import {useEffect, useState} from "react";
+import {useContext, useEffect, useState} from "react";
 import {getAllCountries, searchCountriesByName} from "../../utilities/requests/CountriesRequests";
 import {filterCodes} from "../../utilities/Constants";
-import {DndProvider} from "react-dnd";
-import {HTML5Backend} from "react-dnd-html5-backend";
-import {readFavouriteCountriesLocalstorage, setFavouriteCountriesLocalstorage} from "../../utilities/localstorage";
+import FavouriteContext from "../../contexts/FavouriteContext/FavouriteContext";
 
 function Home() {
   const [search, setSearch] = useState("");
@@ -19,7 +17,8 @@ function Home() {
   const [snackbarType, setSnackbarType] = useState("success");
   const [countries, setCountries] = useState([]);
   const [snackbarMessage, setSnackbarMessage] = useState("");
-  const [favouriteCountries, setFavouriteCountries] = useState({});
+
+  const [favouriteCountries] = useContext(FavouriteContext);
 
   function onSearchChange(value) {
     if (value.trim() !== search.trim()) {
@@ -30,27 +29,6 @@ function Home() {
 
   function closeSnackbar() {
     setSnackbarStatus(false);
-  }
-
-  function onFavouriteDrop(item) {
-    setFavouriteCountries((prevState) => {
-      prevState[item.country.cca3] = {
-        name: item.country.name.common,
-        flag: item.country.flag
-      };
-      setFavouriteCountriesLocalstorage(prevState);
-      return prevState;
-    });
-  }
-
-  function onFavouriteCountryDelete(code) {
-    setFavouriteCountries((prevState) => {
-      delete prevState[code];
-
-      //TODO TEMP Solution
-      setFavouriteCountriesLocalstorage(prevState);
-      return prevState;
-    });
   }
 
   function setData(loading, countries, snackbarStatus, snackbarType, snackbarMessage) {
@@ -66,7 +44,9 @@ function Home() {
     if (filter === filterCodes.NO_FILTER) {
       filteredData = data;
     } else if (filter === filterCodes.FAVOURITES) {
-      filteredData = data.filter();
+      filteredData = data.filter((country) => {
+        return favouriteCountries[country.cca3] !== undefined;
+      });
     } else {
       filteredData = data.filter((country) => {
         return country.region.toUpperCase() === filter;
@@ -80,10 +60,7 @@ function Home() {
   }
 
   useEffect(() => {
-    setFavouriteCountries(readFavouriteCountriesLocalstorage());
-  }, []);
-
-  useEffect(() => {
+    setData(true, [], false, "", "");
     if (search.trim() === "") {
       getAllCountries().then(data => {
         data = filterData(data, filter);
@@ -99,12 +76,6 @@ function Home() {
       });
     }
   }, [search, filter]);
-
-  //TODO fix this
-  // useEffect(() => {
-  //   console.log("useEffect");
-  //   console.log(favouriteCountries);
-  // }, [favouriteCountries]);
 
   return (
     <>
@@ -161,52 +132,46 @@ function Home() {
         container
         sx={{
           height: {
-            xs: "fit-content", lg: "calc(100vh - 11rem)"
+            xs: "fit-content", md: "calc(100vh - 11rem)"
           }
         }}
       >
-        <DndProvider backend={HTML5Backend}>
-          <Grid
-            item
-            lg={3}
-            sx={{
-              pr: 2, display: {
-                xs: "none", lg: "block"
-              }
-            }}>
-            <Favourite
-              sx={{
-                height: {
-                  xs: "0", lg: "calc(100vh - 11.8rem)"
-                },
-                overflow: "scroll"
-              }}
-              onDrop={onFavouriteDrop}
-              onCountryDelete={onFavouriteCountryDelete}
-              countries={favouriteCountries}
-            />
-          </Grid>
-          <Grid
+        <Grid
+          item
+          md={3}
+          sx={{
+            pr: 2, display: {
+              xs: "none", md: "block"
+            }
+          }}>
+          <Favourite
             sx={{
               height: {
-                xs: "0", lg: "calc(100vh - 11rem)"
+                xs: "0", md: "calc(100vh - 11.8rem)"
               },
-              flexGrow: "1 !important",
-              maxWidth: "100% !important",
-              overflowY: "scroll",
-              margin: "0px -0.5rem",
-              padding: "0px 0.5rem"
+              overflow: "scroll"
             }}
-            item
-            xs={12}
-            lg={9}>
-            {
-              <CountriesList
-                countries={countries}
-                loading={loading}/>
-            }
-          </Grid>
-        </DndProvider>
+          />
+        </Grid>
+        <Grid
+          sx={{
+            height: {
+              xs: "0", md: "calc(100vh - 11rem)"
+            },
+            flexGrow: "1 !important",
+            maxWidth: "100% !important",
+            overflowY: "scroll",
+            margin: "0px -0.5rem",
+            padding: "0px 0.5rem"
+          }}
+          item
+          xs={12}
+          md={9}>
+          <CountriesList
+            countries={countries}
+            loading={loading}
+          />
+        </Grid>
       </Grid>
       {
         (snackbarStatus) && (
