@@ -7,7 +7,7 @@ function FilterMenu({onFilterChange, sx = {}}) {
   const [filterValue, setFilterValue] = useState(filterCodes.NO_FILTER);
 
   function onItemClick(item) {
-    if (filterValue.label === item.label) {
+    if (filterValue === item.label) {
       setFilterValue(filterCodes.NO_FILTER);
       onFilterChange(filterCodes.NO_FILTER);
     } else {
@@ -55,7 +55,7 @@ function FilterMenu({onFilterChange, sx = {}}) {
         sx={{
           ...sx
         }}
-        label={(filterValue ? filterValue : "Filter By")}
+        label={(filterValue !== filterCodes.NO_FILTER ? filterValue : "Filter By")}
         enableDropdownArrow={true}
         items={items}
       />
