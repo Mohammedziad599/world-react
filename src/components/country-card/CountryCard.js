@@ -1,24 +1,26 @@
 import "./CountryCard.css";
-import {Card, CardActionArea, CardContent, CardMedia, Grid, Skeleton, Typography} from "@mui/material";
+import {Card, CardActionArea, CardContent, CardMedia, Grid, IconButton, Skeleton, Typography} from "@mui/material";
+import StarRoundedIcon from "@mui/icons-material/StarRounded";
+import StarBorderRoundedIcon from "@mui/icons-material/StarBorderRounded";
 import {Link} from "react-router-dom";
-import {useDrag} from "react-dnd";
-import {dragTypes} from "../../utilities/Constants";
+import {useContext, useState} from "react";
+import FavouriteContext from "../../contexts/FavouriteContext/FavouriteContext";
 
 function CountryCard({country = {}, loading = false, sx = {}}) {
   const {
     flags = {}, name = {}, alt = `${name.common} Flag`, population = 0, region = "", capital = "", code = country.cca3
   } = country;
 
-  const [{isDragging}, drag] = useDrag({
-    type: dragTypes.COUNTRY_CARD,
-    item: {
-      id: code,
-      country: country
-    },
-    collect: monitor => ({
-      isDragging: monitor.isDragging()
-    })
-  });
+  const [favourite, addToFavourite, removeFromFavourite] = useContext(FavouriteContext);
+
+  const [key, setKey] = useState(0);
+
+  const [dragging, setDragging] = useState(false);
+
+  const onDrag = (event) => {
+    event.dataTransfer.setData("country", JSON.stringify(country));
+    setDragging(true);
+  };
 
   if (loading) {
     return (
@@ -62,11 +64,23 @@ function CountryCard({country = {}, loading = false, sx = {}}) {
     );
   }
 
+  function toggleFavourite(event) {
+    event.preventDefault();
+    if (!favourite[code]) {
+      addToFavourite(country);
+    } else {
+      removeFromFavourite(code);
+    }
+    setKey((prevState) => prevState + 1);
+  }
+
   return (
     <Card
-      ref={drag}
+      draggable
+      onDragStart={onDrag}
+      onDragEnd={() => setDragging(false)}
       sx={{
-        opacity: isDragging ? "50%" : "100%",
+        opacity: dragging ? "50%" : "100%",
         ...sx
       }}
     >
@@ -83,7 +97,7 @@ function CountryCard({country = {}, loading = false, sx = {}}) {
           component="img"
           sx={{
             height: {
-              sm: "fit-content", md: "17rem", lg: "14rem", xl: "10rem"
+              xs: "fit-content", md: "13rem", lg: "14rem", xl: "10rem"
             }
           }}
           image={flags.svg}
@@ -150,6 +164,34 @@ function CountryCard({country = {}, loading = false, sx = {}}) {
                 </Typography>
                 {capital[0]}
               </Typography>
+            </Grid>
+            <Grid
+              item
+              sx={{
+                display: {
+                  xs: "flex"
+                },
+                justifyContent: "flex-end"
+              }}
+            >
+              <IconButton
+                sx={{
+                  display: {
+                    xs: "block",
+                    md: "none"
+                  }
+                }}
+                key={key}
+                onClick={toggleFavourite}
+              >
+                {
+                  favourite[code] ? (
+                    <StarRoundedIcon sx={{color: "#ffaa00"}}/>
+                  ) : (
+                    <StarBorderRoundedIcon/>
+                  )
+                }
+              </IconButton>
             </Grid>
           </Grid>
         </CardContent>
