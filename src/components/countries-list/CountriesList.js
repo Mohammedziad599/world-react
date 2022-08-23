@@ -2,7 +2,10 @@ import "./CountriesList.css";
 import CountryCard from "../country-card/CountryCard";
 import {Box} from "@mui/material";
 
-function CountriesList({countries = [], loading = false, sx = {}}) {
+function CountriesList({
+                         countries = [], loading = false, sx = {},
+                         favouriteCountries = {}, deleteFromFavourite, addToFavourite
+                       }) {
   let countriesCards;
 
   if (loading) {
@@ -34,8 +37,10 @@ function CountriesList({countries = [], loading = false, sx = {}}) {
             sx={{
               flexGrow: 1,
               height: "100%"
-
             }}
+            favouriteCountries={favouriteCountries}
+            deleteFromFavourite={deleteFromFavourite}
+            addToFavourite={addToFavourite}
             country={country}
           />
         </Box>
